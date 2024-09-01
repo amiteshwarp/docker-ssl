@@ -1,0 +1,24 @@
+services:
+  web:
+    image: web
+    restart: unless-stopped
+    build:
+      context: .
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./web:/var/www/web
+      - certs:/ssl
+    depends_on:
+      - ssl
+
+  ssl:
+    image: linuxserver/letsencrypt:version-1.11.0
+    environment:
+      - DOMAIN=*.*.localhost
+    volumes:
+      - certs:/config
+    command: --renew-days 365
+volumes:
+  certs:
